@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Vidly.Models.ImdbMovie>
+
+@{
+    ViewBag.Title = "ImdbMovies";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>ImdbMovies test</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ImdbName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ImdbUrl);
+        </th>
+        <th></th>
+    </tr>
+
+    @{
+        //check if model is not null
+        if (Model != null)
+        {
+            foreach (var item in Model)
+
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ImdbName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ImdbUrl)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ImdbName }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.ImdbUrl }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    </td>
+                </tr>
+            }
+        }
+    }
+</table>

@@ -12,31 +12,50 @@ namespace Vidly.Controllers
     [Authorize]
     public class AccountController : Controller
     {
+        #region Private Members
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        #endregion
 
+        #region Constructors
+        /// <summary>
+        /// Constructor with no parameters
+        /// </summary>
         public AccountController()
         {
         }
-
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userManager"></param>
+        /// <param name="signInManager"></param>
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
         }
+        #endregion
 
+        #region Public Properties
+        /// <summary>
+        /// 
+        /// </summary>
         public ApplicationSignInManager SignInManager
         {
             get
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ApplicationUserManager UserManager
         {
             get
@@ -48,7 +67,9 @@ namespace Vidly.Controllers
                 _userManager = value;
             }
         }
+        #endregion
 
+        #region Public Methods ActionResults
         //
         // GET: /Account/Login
         [AllowAnonymous]
@@ -117,7 +138,7 @@ namespace Vidly.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -150,7 +171,7 @@ namespace Vidly.Controllers
             {
                 var user = new ApplicationUser
                 {
-                    UserName = model.Email, 
+                    UserName = model.Email,
                     Email = model.Email,
                     DrivingLicense = model.DrivingLicense,
                     Phone = model.Phone
@@ -158,8 +179,8 @@ namespace Vidly.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -372,7 +393,7 @@ namespace Vidly.Controllers
                 }
                 var user = new ApplicationUser
                 {
-                    UserName = model.Email, 
+                    UserName = model.Email,
                     Email = model.Email,
                     DrivingLicense = model.DrivingLicense
                 };
@@ -410,6 +431,7 @@ namespace Vidly.Controllers
         {
             return View();
         }
+        #endregion
 
         protected override void Dispose(bool disposing)
         {

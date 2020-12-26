@@ -4,9 +4,16 @@ using System.ComponentModel.DataAnnotations;
 namespace Vidly.Dtos
 {
     public class MovieDto
-    {
+    { 
+        #region Public Properties
+        /// <summary>
+        /// 
+        /// </summary>
         public int Id { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Required]
         [StringLength(255)]
         public string Name { get; set; }
@@ -22,5 +29,6 @@ namespace Vidly.Dtos
 
         [Range(1, 20)]
         public byte NumberInStock { get; set; }
+        #endregion
     }
 }

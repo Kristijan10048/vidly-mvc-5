@@ -10,18 +10,32 @@ namespace Vidly.Controllers.Api
 {
     public class CustomersController : ApiController
     {
-        private ApplicationDbContext _context;
+        #region Private Members
+        /// <summary>
+        /// 
+        /// </summary>
+        private ApplicationDbContext m_context;
+        #endregion
 
+        #region Constructors
+        /// <summary>
+        /// Costructor
+        /// </summary>
         public CustomersController()
         {
-            _context = new ApplicationDbContext();
+            m_context = new ApplicationDbContext();
         }
+        #endregion
 
-        // GET /api/customers
+        #region Public Methods
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
         public IHttpActionResult GetCustomers(string query = null)
         {
-            var customersQuery = _context.Customers
-                .Include(c => c.MembershipType);
+            var customersQuery = m_context.Customers.Include(c => c.MembershipType);
 
             if (!String.IsNullOrWhiteSpace(query))
                 customersQuery = customersQuery.Where(c => c.Name.Contains(query));
@@ -29,68 +43,99 @@ namespace Vidly.Controllers.Api
             var customerDtos = customersQuery
                 .ToList()
                 .Select(Mapper.Map<Customer, CustomerDto>);
-            
-            return Ok(customerDtos);    
+
+            return Ok(customerDtos);
         }
 
-        // GET /api/customers/1
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public IHttpActionResult GetCustomer(int id)
         {
-            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+            var customer = m_context.Customers.SingleOrDefault(c => c.Id == id);
 
             if (customer == null)
                 return NotFound();
 
-            return Ok(Mapper.Map<Customer, CustomerDto>(customer));
+            var tmpMap = Mapper.Map<Customer, CustomerDto>(customer);
+
+            return Ok(tmpMap);
         }
 
-        // POST /api/customers
+        /// <summary>
+        /// Creates a customer
+        /// </summary>
+        /// <param name="customerDto">Customer data</param>
+        /// <returns></returns>
         [HttpPost]
         public IHttpActionResult CreateCustomer(CustomerDto customerDto)
         {
+            //TODO Check
             if (!ModelState.IsValid)
                 return BadRequest();
 
             var customer = Mapper.Map<CustomerDto, Customer>(customerDto);
-            _context.Customers.Add(customer);
-            _context.SaveChanges();
+            m_context.Customers.Add(customer);
+            m_context.SaveChanges();
 
+            //TODO Check?
             customerDto.Id = customer.Id;
             return Created(new Uri(Request.RequestUri + "/" + customer.Id), customerDto);
         }
 
-        // PUT /api/customers/1
+        /// <summary>
+        /// Updates a custumer basesd on id
+        /// </summary>
+        /// <param name="id">Customer's id</param>
+        /// <param name="customerDto">Customer's data</param>
+        /// <returns></returns>
         [HttpPut]
         public IHttpActionResult UpdateCustomer(int id, CustomerDto customerDto)
         {
+            //TODO What is model state?
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
+            //get exsisting customer in db
+            var customerInDb = m_context.Customers.SingleOrDefault(c => c.Id == id);
 
             if (customerInDb == null)
                 return NotFound();
 
+            //update it
             Mapper.Map(customerDto, customerInDb);
 
-            _context.SaveChanges();
+            //update it in db
+            m_context.SaveChanges();
 
             return Ok();
         }
 
-        // DELETE /api/customers/1
+        /// <summary>
+        /// Delletes a custumer
+        /// </summary>
+        /// <param name="id">Customer's id</param>
+        /// <returns></returns>
         [HttpDelete]
         public IHttpActionResult DeleteCustomer(int id)
         {
-            var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
+            // search for customer in db based on id
+            var customerInDb = m_context.Customers.SingleOrDefault(c => c.Id == id);
 
+            //check for null
             if (customerInDb == null)
                 return NotFound();
 
-            _context.Customers.Remove(customerInDb);
-            _context.SaveChanges();
+            //delete customer
+            m_context.Customers.Remove(customerInDb);
+
+            //save it
+            m_context.SaveChanges();
 
             return Ok();
         }
+        #endregion
     }
 }
