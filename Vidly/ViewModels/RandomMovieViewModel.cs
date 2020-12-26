@@ -6,6 +6,9 @@ using Vidly.Models;
 
 namespace Vidly.ViewModels
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RandomMovieViewModel
     {
         public Movie Movie { get; set; }

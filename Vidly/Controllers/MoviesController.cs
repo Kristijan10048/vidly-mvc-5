@@ -10,8 +10,13 @@ namespace Vidly.Controllers
 {
     public class MoviesController : Controller
     {
+        #region Private Members
+        /// <summary>
+        /// 
+        /// </summary>
         private ApplicationDbContext _context;
-
+        #endregion
+        
         public MoviesController()
         {
             _context = new ApplicationDbContext();
@@ -22,14 +27,21 @@ namespace Vidly.Controllers
             _context.Dispose();
         }
 
+        #region Public View Models
         public ViewResult Index()
         {
+            //pops up List
             if (User.IsInRole(RoleName.CanManageMovies))
                 return View("List");
-                
+             
+            //posp up read ReadOnlyList.cshtml
             return View("ReadOnlyList");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = RoleName.CanManageMovies)]
         public ViewResult New()
         {
@@ -43,6 +55,11 @@ namespace Vidly.Controllers
             return View("MovieForm", viewModel);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Roles = RoleName.CanManageMovies)]
         public ActionResult Edit(int id)
         {
@@ -59,7 +76,11 @@ namespace Vidly.Controllers
             return View("MovieForm", viewModel);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult Details(int id)
         {
             var movie = _context.Movies.Include(m => m.Genre).SingleOrDefault(m => m.Id == id);
@@ -71,8 +92,10 @@ namespace Vidly.Controllers
 
         }
 
-
-        // GET: Movies/Random
+        /// <summary>
+        /// Displayes Random.cshtml
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Random()
         {
             var movie = new Movie() { Name = "Shrek!" };
@@ -91,6 +114,11 @@ namespace Vidly.Controllers
             return View(viewModel);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="movie"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = RoleName.CanManageMovies)]
@@ -124,5 +152,15 @@ namespace Vidly.Controllers
 
             return RedirectToAction("Index", "Movies");
         }
+
+        /// <summary>
+        /// Occures when Moveis/ImdbMovies is requested
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult ImdbMovies()
+        {
+            return View();
+        }
+        #endregion
     }
 }
